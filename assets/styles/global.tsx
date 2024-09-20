@@ -33,5 +33,7 @@ export const globalStyles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     backgroundColor: "white",
+    borderWidth: 0.25,
+    borderColor: "#999",
   },
 });

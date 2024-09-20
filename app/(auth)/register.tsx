@@ -1,5 +1,6 @@
 import { globalStyles } from "@/assets/styles/global";
 import { BottomImage } from "@/components/BottomImagePlaceHolder";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Image, SafeAreaView } from "react-native";
 import {
@@ -42,11 +43,12 @@ const DeliveryRegistrationForm = () => {
     setForm({ ...form, gender: radio === "1" ? "male" : "female" });
   };
 
+  const router = useRouter();
   const handleSubmit = () => {
     // Handle form submission logic
     console.log(form);
+    router.navigate("/(auth)/email");
   };
-
   return (
     <SafeAreaView style={{ backgroundColor: "#EEEFF0" }}>
       <ScrollView
@@ -155,8 +157,24 @@ const DeliveryRegistrationForm = () => {
         <Text style={styles.mandatory}>*These fields are mandatory</Text>
 
         <TouchableOpacity style={globalStyles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>LOGIN</Text>
+          <Text style={styles.buttonText}>Proceed</Text>
         </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 4,
+            alignItems: "center",
+          }}
+        >
+          <Text>Already registered?</Text>
+          <TouchableOpacity
+            onPress={() => {
+              router.navigate("/(auth)/");
+            }}
+          >
+            <Text style={{ color: "red" }}>LOGIN HERE</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
       <BottomImage />
     </SafeAreaView>
@@ -183,8 +201,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "500",
   },
   inputContainer: {
     display: "flex",

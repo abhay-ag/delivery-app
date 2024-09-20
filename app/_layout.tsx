@@ -5,7 +5,7 @@ export default function RootLayout() {
   const router = useRouter();
   useEffect(() => {
     // setTimeout(() => {
-      router.replace("/(auth)/register");
+    router.replace("/init");
     // }, 2000);
   }, [router]);
   return (
