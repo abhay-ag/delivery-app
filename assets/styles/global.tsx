@@ -27,4 +27,11 @@ export const globalStyles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 4,
   },
+  input: {
+    width: "100%",
+    height: 48,
+    borderRadius: 8,
+    padding: 8,
+    backgroundColor: "white",
+  },
 });

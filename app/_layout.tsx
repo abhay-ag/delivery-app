@@ -4,9 +4,9 @@ import { useEffect } from "react";
 export default function RootLayout() {
   const router = useRouter();
   useEffect(() => {
-    setTimeout(() => {
-      router.replace("/init");
-    }, 2000);
+    // setTimeout(() => {
+      router.replace("/(auth)/register");
+    // }, 2000);
   }, [router]);
   return (
     <Stack>

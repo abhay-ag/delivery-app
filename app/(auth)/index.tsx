@@ -1,6 +1,6 @@
 import { globalStyles } from "@/assets/styles/global";
 import { BottomImage } from "@/components/BottomImagePlaceHolder";
-import Input from "@/components/Input";
+import { useRouter } from "expo-router";
 import {
   Image,
   SafeAreaView,
@@ -13,14 +13,19 @@ import {
 } from "react-native";
 
 export default function Auth() {
+  const router = useRouter();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#EEEFF0" }}>
       <ScrollView contentContainerStyle={styles.container}>
         <Image source={require("@/assets/images/bldDrp.png")} />
         <Text style={styles.heading}>Log into your account!</Text>
         <View style={styles.inner}>
-          <Input placeholder="Email Address" />
-          <Input placeholder="Password" secureTextEntry={true} />
+          <TextInput style={globalStyles.input} placeholder="Email Address" />
+          <TextInput
+            style={globalStyles.input}
+            placeholder="Password"
+            secureTextEntry={true}
+          />
         </View>
         <TouchableOpacity style={globalStyles.button}>
           <Text style={{ color: "white", fontWeight: "500" }}>LOGIN</Text>
@@ -30,7 +35,11 @@ export default function Auth() {
         </TouchableOpacity>
         <View style={styles.cta}>
           <Text>Don't have an account?</Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              router.navigate("/(auth)/register");
+            }}
+          >
             <Text style={{ color: "red" }}>REGISTER NOW</Text>
           </TouchableOpacity>
         </View>
