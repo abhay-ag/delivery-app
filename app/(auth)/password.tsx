@@ -9,8 +9,21 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { StyleSheet, View } from "react-native";
+import { useState } from "react";
 
 export default function PasswordScreen() {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = () => {
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+    } else {
+      setError("");
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -21,13 +34,18 @@ export default function PasswordScreen() {
             style={globalStyles.input}
             secureTextEntry
             placeholder="password"
+            value={password} // Bind password state
+            onChangeText={setPassword} // Update password state
           />
           <TextInput
             style={globalStyles.input}
             secureTextEntry
             placeholder="confirm password"
+            value={confirmPassword} // Bind confirm password state
+            onChangeText={setConfirmPassword} // Update confirm password state
           />
-          <TouchableOpacity style={globalStyles.button}>
+          {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
+          <TouchableOpacity style={globalStyles.button} onPress={handleSubmit}>
             <Text style={{ color: "white" }}>Submit</Text>
           </TouchableOpacity>
         </View>

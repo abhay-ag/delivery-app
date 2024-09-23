@@ -1,6 +1,7 @@
 import { globalStyles } from "@/assets/styles/global";
 import { BottomImage } from "@/components/BottomImagePlaceHolder";
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -13,6 +14,15 @@ import { StyleSheet, View } from "react-native";
 
 export default function EmailScreen() {
   const router = useRouter();
+  const [isCodeSent, setIsCodeSent] = useState(false);
+
+  const sendCode = async () => {
+    const response = await fetch("YOUR_API_ENDPOINT", { method: "POST" });
+    if (response.ok) {
+      setIsCodeSent(true);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -23,7 +33,7 @@ export default function EmailScreen() {
         </Text>
         <View style={{ width: "100%", gap: 12 }}>
           <TextInput style={globalStyles.input} placeholder="e-mail here" />
-          <TouchableOpacity style={globalStyles.button}>
+          <TouchableOpacity onPress={sendCode} style={globalStyles.button}>
             <Text style={{ color: "white" }}>Send Code</Text>
           </TouchableOpacity>
         </View>
@@ -34,6 +44,7 @@ export default function EmailScreen() {
               router.navigate("/(auth)/password");
             }}
             style={globalStyles.button}
+            disabled={!isCodeSent}
           >
             <Text style={{ color: "white" }}>Verify Code</Text>
           </TouchableOpacity>

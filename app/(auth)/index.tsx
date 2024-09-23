@@ -27,7 +27,12 @@ export default function Auth() {
             secureTextEntry={true}
           />
         </View>
-        <TouchableOpacity style={globalStyles.button}>
+        <TouchableOpacity
+          style={globalStyles.button}
+          onPress={() => {
+            router.navigate("/(home)/");
+          }}
+        >
           <Text style={{ color: "white", fontWeight: "500" }}>LOGIN</Text>
         </TouchableOpacity>
         <TouchableOpacity>

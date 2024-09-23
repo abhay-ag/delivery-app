@@ -5,7 +5,7 @@ export default function RootLayout() {
   const router = useRouter();
   useEffect(() => {
     setTimeout(() => {
-    router.replace("/init");
+      router.replace("/(home)/ride");
     }, 2000);
   }, [router]);
   return (
@@ -13,6 +13,7 @@ export default function RootLayout() {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="init" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(home)" options={{ headerShown: false }} />
     </Stack>
   );
 }
