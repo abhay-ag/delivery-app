@@ -5,7 +5,7 @@ export default function RootLayout() {
   const router = useRouter();
   useEffect(() => {
     setTimeout(() => {
-      router.replace("/(home)/ride");
+      router.replace("/(home)/");
     }, 2000);
   }, [router]);
   return (

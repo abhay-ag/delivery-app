@@ -3,6 +3,7 @@ import { View } from "react-native";
 import DeliveryScreen from "./rideDetails";
 import UserProfileScreen from "./profile";
 import BloodDonationApp from "./notification";
+import HomeScreen from "./home";
 
 export default function Home() {
   const Drawer = createDrawerNavigator();
@@ -11,8 +12,9 @@ export default function Home() {
       screenOptions={{
         headerTitle: "",
       }}
-      initialRouteName="profile"
+      initialRouteName="home"
     >
+      <Drawer.Screen name="Home" component={HomeScreen}  />
       <Drawer.Screen name="Profile" component={UserProfileScreen} />
       <Drawer.Screen name="Notifications" component={BloodDonationApp} />
     </Drawer.Navigator>
