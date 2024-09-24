@@ -10,6 +10,7 @@ export default function HomeLayout() {
       <Stack.Screen name="notification" />
       <Stack.Screen name="profile" />
       <Stack.Screen name="index" />
+      <Stack.Screen name="qr" />
       <Stack.Screen
         name="rideDetails"
         options={{

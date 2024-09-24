@@ -34,7 +34,10 @@ function RideItem({}: any) {
       </View>
       <TouchableOpacity
         onPress={() => {
-          router.navigate("/(home)/ride");
+          router.navigate({
+            pathname: "/(home)/qr",
+            params: { rideId: "123" },
+          });
         }}
         style={{ ...globalStyles.button, borderRadius: 12 }}
       >

@@ -4,6 +4,7 @@ import DeliveryScreen from "./rideDetails";
 import UserProfileScreen from "./profile";
 import BloodDonationApp from "./notification";
 import HomeScreen from "./home";
+import QRCodeScanner from "./qr";
 
 export default function Home() {
   const Drawer = createDrawerNavigator();
@@ -14,7 +15,7 @@ export default function Home() {
       }}
       initialRouteName="home"
     >
-      <Drawer.Screen name="Home" component={HomeScreen}  />
+      <Drawer.Screen name="Home" component={HomeScreen} />
       <Drawer.Screen name="Profile" component={UserProfileScreen} />
       <Drawer.Screen name="Notifications" component={BloodDonationApp} />
     </Drawer.Navigator>

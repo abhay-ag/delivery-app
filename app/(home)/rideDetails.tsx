@@ -4,6 +4,7 @@ import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import { globalStyles } from "@/assets/styles/global";
 import { useState } from "react";
+import { useRoute } from "@react-navigation/native";
 
 const DetailRow = ({ title, value }: any) => {
   return (
@@ -15,6 +16,8 @@ const DetailRow = ({ title, value }: any) => {
 };
 
 export default function DeliveryScreen() {
+  const route = useRoute<any>();
+  const { rideId } = route.params;
   const [top, setTop] = useState<any>(350);
   const [step, setStep] = useState<any>(0);
 
