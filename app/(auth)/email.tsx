@@ -9,17 +9,45 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  Alert,
+  View,
+  StyleSheet,
 } from "react-native";
-import { StyleSheet, View } from "react-native";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BASE_URL } from "@env";
 
 export default function EmailScreen() {
   const router = useRouter();
   const [isCodeSent, setIsCodeSent] = useState(false);
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
 
   const sendCode = async () => {
-    const response = await fetch("YOUR_API_ENDPOINT", { method: "POST" });
-    if (response.ok) {
-      setIsCodeSent(true);
+    try {
+      const response = await axios.post(`${BASE_URL}/api/send-code/`, { email });
+      if (response.data) {
+        setIsCodeSent(true);
+        Alert.alert("Success", "Verification code sent to your email.");
+      }
+    } catch (error) {
+      console.error("Error sending code:", error);
+      Alert.alert("Error", "Failed to send verification code");
+    }
+  };
+
+  const verifyCode = async () => {
+    try {
+      const response = await axios.post(`${BASE_URL}/api/verify-code/`, { email, code });
+      if (response.data && response.data.token) {
+        await AsyncStorage.setItem('authToken', response.data.token);
+        router.navigate("/(home)/");
+      } else {
+        Alert.alert("Verification Failed", "Invalid code");
+      }
+    } catch (error) {
+      console.error("Error verifying code:", error);
+      Alert.alert("Verification Failed", "An error occurred during verification");
     }
   };
 
@@ -28,21 +56,28 @@ export default function EmailScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <Image source={require("@/assets/images/bldDrp.png")} />
         <Text style={styles.text}>
-          Please enter the code you received. The code will expire in 10
-          minutes.
+          Please enter the code you received. The code will expire in 10 minutes.
         </Text>
         <View style={{ width: "100%", gap: 12 }}>
-          <TextInput style={globalStyles.input} placeholder="e-mail here" />
+          <TextInput
+            style={globalStyles.input}
+            placeholder="e-mail here"
+            value={email}
+            onChangeText={setEmail}
+          />
           <TouchableOpacity onPress={sendCode} style={globalStyles.button}>
             <Text style={{ color: "white" }}>Send Code</Text>
           </TouchableOpacity>
         </View>
         <View style={{ width: "100%", gap: 12 }}>
-          <TextInput style={globalStyles.input} placeholder="XXXXXX" />
+          <TextInput
+            style={globalStyles.input}
+            placeholder="XXXXXX"
+            value={code}
+            onChangeText={setCode}
+          />
           <TouchableOpacity
-            onPress={() => {
-              router.navigate("/(auth)/password");
-            }}
+            onPress={verifyCode}
             style={globalStyles.button}
             disabled={!isCodeSent}
           >
@@ -62,9 +97,8 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   text: {
-    fontWeight: "700",
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "center",
-    maxWidth: 250,
+    marginVertical: 20,
   },
 });

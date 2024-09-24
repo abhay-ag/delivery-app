@@ -1,6 +1,7 @@
 import { globalStyles } from "@/assets/styles/global";
 import { BottomImage } from "@/components/BottomImagePlaceHolder";
 import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
   Image,
   SafeAreaView,
@@ -10,28 +11,60 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
 } from "react-native";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BASE_URL } from "@env";
 
 export default function Auth() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(`${BASE_URL}/api/auth/login/`, {
+        username: email, // Assuming email is used as username
+        password,
+      });
+      
+      if (response.data && response.data.token) {
+        // Store the token securely
+        await AsyncStorage.setItem('authToken', response.data.token);
+        router.navigate("/(home)/");
+      } else {
+        Alert.alert("Login Failed", "Invalid credentials");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      Alert.alert("Login Failed", "An error occurred during login");
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#EEEFF0" }}>
       <ScrollView contentContainerStyle={styles.container}>
         <Image source={require("@/assets/images/bldDrp.png")} />
         <Text style={styles.heading}>Log into your account!</Text>
         <View style={styles.inner}>
-          <TextInput style={globalStyles.input} placeholder="Email Address" />
+          <TextInput 
+            style={globalStyles.input} 
+            placeholder="Email Address" 
+            value={email}
+            onChangeText={setEmail}
+          />
           <TextInput
             style={globalStyles.input}
             placeholder="Password"
             secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
           />
         </View>
         <TouchableOpacity
           style={globalStyles.button}
-          onPress={() => {
-            router.navigate("/(home)/");
-          }}
+          onPress={handleLogin}
         >
           <Text style={{ color: "white", fontWeight: "500" }}>LOGIN</Text>
         </TouchableOpacity>

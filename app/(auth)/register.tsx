@@ -2,171 +2,138 @@ import { globalStyles } from "@/assets/styles/global";
 import { BottomImage } from "@/components/BottomImagePlaceHolder";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Image, SafeAreaView } from "react-native";
 import {
-  View,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
+  View,
+  Alert,
 } from "react-native";
-import RadioGroup from "react-native-radio-buttons-group";
+import RadioGroup, { RadioButtonProps } from "react-native-radio-buttons-group";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BASE_URL } from "@env";
 
-const DeliveryRegistrationForm = () => {
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    dob: "",
-    gender: "male",
+interface FormState {
+  username: string;
+  password: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  address: string;
+  gender: string;
+}
+
+const DeliveryRegistrationForm = (): JSX.Element => {
+  const router = useRouter();
+  const [form, setForm] = useState<FormState>({
+    username: "",
+    password: "",
     email: "",
-    mobile: "",
+    first_name: "",
+    last_name: "",
+    phone_number: "",
     address: "",
-    licenseNumber: "",
-    vehicleType: "",
-    vehicleNumber: "",
+    gender: "male",
   });
 
-  const radioButtonsData = [
+  const radioButtonsData: RadioButtonProps[] = [
     { id: "1", label: "MALE", value: "male" },
     { id: "2", label: "FEMALE", value: "female" },
   ];
 
-  const [gender, setGender] = useState("1");
-
-  const handleChange = (field: any, value: any) => {
-    setForm({ ...form, [field]: value });
+  const handleChange = (name: keyof FormState, value: string): void => {
+    setForm({ ...form, [name]: value });
   };
 
-  const handleRadioPress = (radio: any) => {
-    setGender(radio);
-    setForm({ ...form, gender: radio === "1" ? "male" : "female" });
+  const handleRegister = async (): Promise<void> => {
+    try {
+      const response = await axios.post(`${BASE_URL}/api/register/`, form);
+      if (response.data && response.data.token) {
+        await AsyncStorage.setItem('authToken', response.data.token);
+        router.navigate("/(home)/");
+      } else {
+        Alert.alert("Registration Failed", "An error occurred during registration");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      Alert.alert("Registration Failed", "An error occurred during registration");
+    }
   };
 
-  const router = useRouter();
-  const handleSubmit = () => {
-    // Handle form submission logic
-    console.log(form);
-    router.navigate("/(auth)/email");
-  };
   return (
-    <SafeAreaView style={{ backgroundColor: "#EEEFF0" }}>
-      <ScrollView
-        automaticallyAdjustKeyboardInsets
-        contentContainerStyle={styles.container}
-      >
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#EEEFF0" }}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Image source={require("@/assets/images/bldDrp.png")} />
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>First Name*</Text>
+        <Text style={styles.heading}>Register as a Delivery Staff</Text>
+        <View style={styles.inner}>
           <TextInput
             style={globalStyles.input}
-            placeholder="Input text"
-            value={form.firstName}
-            onChangeText={(value) => handleChange("firstName", value)}
+            placeholder="Username"
+            value={form.username}
+            onChangeText={(value) => handleChange("username", value)}
           />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Last Name*</Text>
           <TextInput
             style={globalStyles.input}
-            placeholder="Input text"
-            value={form.lastName}
-            onChangeText={(value) => handleChange("lastName", value)}
+            placeholder="Password"
+            secureTextEntry={true}
+            value={form.password}
+            onChangeText={(value) => handleChange("password", value)}
           />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Date of Birth*</Text>
           <TextInput
             style={globalStyles.input}
-            placeholder="Input text"
-            value={form.dob}
-            onChangeText={(value) => handleChange("dob", value)}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Gender*</Text>
-          <RadioGroup
-            radioButtons={radioButtonsData}
-            selectedId={gender}
-            onPress={handleRadioPress}
-            layout="row"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>E-Mail*</Text>
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Input text"
-            keyboardType="email-address"
+            placeholder="Email"
             value={form.email}
             onChangeText={(value) => handleChange("email", value)}
           />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Mobile Number*</Text>
           <TextInput
             style={globalStyles.input}
-            placeholder="Input text"
-            keyboardType="phone-pad"
-            value={form.mobile}
-            onChangeText={(value) => handleChange("mobile", value)}
+            placeholder="First Name"
+            value={form.first_name}
+            onChangeText={(value) => handleChange("first_name", value)}
           />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Residential Address*</Text>
           <TextInput
             style={globalStyles.input}
-            placeholder="Input text"
+            placeholder="Last Name"
+            value={form.last_name}
+            onChangeText={(value) => handleChange("last_name", value)}
+          />
+          <TextInput
+            style={globalStyles.input}
+            placeholder="Phone Number"
+            value={form.phone_number}
+            onChangeText={(value) => handleChange("phone_number", value)}
+          />
+          <TextInput
+            style={globalStyles.input}
+            placeholder="Address"
             value={form.address}
             onChangeText={(value) => handleChange("address", value)}
           />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>License Number*</Text>
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Input text"
-            value={form.licenseNumber}
-            onChangeText={(value) => handleChange("licenseNumber", value)}
+          <RadioGroup
+            radioButtons={radioButtonsData}
+            onPress={(radioButtonsArray:any) => {
+              const selectedButton = radioButtonsArray.find((button:any) => button.selected);
+              if (selectedButton) {
+                handleChange("gender", selectedButton.value);
+              }
+            }}
+            layout="row"
           />
         </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Vehicle Type*</Text>
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Input text"
-            value={form.vehicleType}
-            onChangeText={(value) => handleChange("vehicleType", value)}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Vehicle Number*</Text>
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Input text"
-            value={form.vehicleNumber}
-            onChangeText={(value) => handleChange("vehicleNumber", value)}
-          />
-        </View>
-
-        <Text style={styles.mandatory}>*These fields are mandatory</Text>
-
-        <TouchableOpacity style={globalStyles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Proceed</Text>
-        </TouchableOpacity>
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 4,
-            alignItems: "center",
-          }}
+        <TouchableOpacity
+          style={globalStyles.button}
+          onPress={handleRegister}
         >
-          <Text>Already registered?</Text>
+          <Text style={{ color: "white", fontWeight: "500" }}>REGISTER</Text>
+        </TouchableOpacity>
+        <View style={styles.cta}>
+          <Text>Already have an account?</Text>
           <TouchableOpacity
             onPress={() => {
               router.navigate("/(auth)/");
@@ -184,29 +151,26 @@ const DeliveryRegistrationForm = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 12,
+    display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     gap: 24,
-    paddingBottom: 80,
   },
-  label: {
-    alignSelf: "flex-start",
-    marginBottom: 5,
-    fontSize: 14,
-    color: "gray",
-  },
-  mandatory: {
-    fontSize: 12,
-    color: "gray",
-    marginVertical: 10,
-  },
-  buttonText: {
-    color: "#fff",
+  heading: {
+    fontSize: 32,
     fontWeight: "500",
   },
-  inputContainer: {
-    display: "flex",
-    gap: 4,
+  inner: {
+    gap: 12,
     width: "100%",
+    marginTop: 56,
+  },
+  cta: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 4,
+    alignItems: "center",
+    marginTop: 120,
   },
 });
 

@@ -1,5 +1,5 @@
 import { globalStyles } from "@/assets/styles/global";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,10 +7,15 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import axios from 'axios';
+import { useRouter } from "expo-router";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BASE_URL } from "@env";
 
-const ProfileItem = ({ label, value }: any) => (
+const ProfileItem = ({ label, value }:any) => (
   <View style={styles.profileItem}>
     <Text style={styles.label}>{label}</Text>
     <Text style={styles.value}>{value}</Text>
@@ -18,6 +23,45 @@ const ProfileItem = ({ label, value }: any) => (
 );
 
 const UserProfileScreen = () => {
+  const [profile, setProfile] = useState<any>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/api/delivery-staff/me/`, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      setProfile(response.data);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      Alert.alert("Error", "Failed to fetch profile information");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      await axios.post(`${BASE_URL}/api/auth/logout/`, {}, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      // Clear the stored token here
+      await AsyncStorage.removeItem('authToken');
+      router.replace("/(auth)/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      Alert.alert("Error", "Failed to logout");
+    }
+  };
+
+  if (!profile) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -30,20 +74,18 @@ const UserProfileScreen = () => {
         </View>
 
         <View style={styles.nameContainer}>
-          <Text style={styles.name}>abc</Text>
-          <Text style={styles.userId}>User ID : 12345abc</Text>
+          <Text style={styles.name}>{`${profile.first_name} ${profile.last_name}`}</Text>
+          <Text style={styles.userId}>User ID : {profile.id}</Text>
         </View>
 
         <View style={styles.infoContainer}>
-          <ProfileItem label="Current city" value="Chandigarh road, Mohali" />
-          <ProfileItem label="Contact No." value="1234567890" />
-          <ProfileItem label="Email" value="abcd1@gmail.com" />
-          <ProfileItem label="Age" value="23 year" />
-          <ProfileItem label="Weight" value="50 kg" />
-          <ProfileItem label="Blood Group" value="A +ve" />
+          <ProfileItem label="Username" value={profile.username} />
+          <ProfileItem label="Email" value={profile.email} />
+          <ProfileItem label="Phone Number" value={profile.phone_number} />
+          <ProfileItem label="Address" value={profile.address} />
         </View>
 
-        <TouchableOpacity style={{ ...globalStyles.button, marginTop: 24 }}>
+        <TouchableOpacity style={{ ...globalStyles.button, marginTop: 24 }} onPress={handleLogout}>
           <Text style={{ color: "white" }}>LOGOUT</Text>
         </TouchableOpacity>
       </ScrollView>

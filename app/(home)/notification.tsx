@@ -1,5 +1,5 @@
 import { BottomImage } from "@/components/BottomImagePlaceHolder";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,14 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  Alert,
 } from "react-native";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const NotificationItem = ({ hospital, bloodGroup, time, date }: any) => (
+const BASE_URL = "http://localhost:8000"; // Replace with your actual API base URL
+
+const NotificationItem = ({ hospital, bloodGroup, time, date }:any) => (
   <View style={styles.notificationItem}>
     <Text style={styles.hospitalText}>{hospital}</Text>
     <Text style={styles.infoText}>{bloodGroup}</Text>
@@ -20,6 +25,25 @@ const NotificationItem = ({ hospital, bloodGroup, time, date }: any) => (
 );
 
 export const BloodDonationApp = () => {
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    // try {
+    //   const token = await AsyncStorage.getItem('authToken');
+    //   const response = await axios.get(`${BASE_URL}/api/notifications/`, {
+    //     headers: { Authorization: `Token ${token}` }
+    //   });
+    //   setNotifications(response.data);
+    // } catch (error) {
+    //   console.error("Error fetching notifications:", error);
+    //   Alert.alert("Error", "Failed to fetch notifications");
+    // }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -28,26 +52,15 @@ export const BloodDonationApp = () => {
           <Text style={styles.notificationText}>Notification</Text>
         </View>
 
-        <NotificationItem
-          hospital="abc Hospital"
-          bloodGroup="Blood group+ve"
-          time="9:30"
-          date="18 AUG 2024"
-        />
-
-        <NotificationItem
-          hospital="xyz Hospital"
-          bloodGroup="Blood group-ve"
-          time="9:30"
-          date="18 AUG 2024"
-        />
-
-        <NotificationItem
-          hospital="xyz Hospital"
-          bloodGroup="Blood group-ve"
-          time="9:30"
-          date="18 AUG 2024"
-        />
+        {notifications.map((notification:any) => (
+          <NotificationItem
+            key={notification.id}
+            hospital={notification.hospital}
+            bloodGroup={notification.bloodGroup}
+            time={notification.time}
+            date={notification.date}
+          />
+        ))}
       </ScrollView>
       <BottomImage opacity />
     </SafeAreaView>
@@ -57,60 +70,33 @@ export const BloodDonationApp = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#F5F5F5",
   },
   scrollView: {
-    flexGrow: 1,
-    alignItems: "center",
-    paddingTop: 20,
+    padding: 20,
+    gap: 8,
   },
   header: {
-    flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    paddingHorizontal: 20,
-  },
-  dropIconContainer: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
   },
   notificationText: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
-    marginLeft: 10,
-  },
-  notificationDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "black",
-    marginLeft: 5,
-    alignSelf: "flex-start",
-    marginTop: 3,
   },
   notificationItem: {
-    backgroundColor: "#F0F0F0",
-    borderRadius: 10,
-    padding: 15,
-    width: "90%",
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 8,
     marginBottom: 10,
   },
   hospitalText: {
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 5,
   },
   infoText: {
     fontSize: 14,
     color: "#666",
-  },
-  footer: {
-    height: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#FFE6E6",
   },
 });
 

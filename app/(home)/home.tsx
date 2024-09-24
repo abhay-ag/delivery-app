@@ -1,44 +1,81 @@
 import { globalStyles } from "@/assets/styles/global";
 import { useRouter } from "expo-router";
-import { Text, TouchableOpacity } from "react-native";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet, View, Alert } from "react-native";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const BASE_URL = "http://localhost:8000"; // Replace with your actual API base URL
 
 export default function HomeScreen() {
+  const [deliveries, setDeliveries] = useState([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchDeliveries();
+  }, []);
+
+  const fetchDeliveries = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/api/deliveries/`, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      setDeliveries(response.data);
+    } catch (error) {
+      console.error("Error fetching deliveries:", error);
+      Alert.alert("Error", "Failed to fetch deliveries");
+    }
+  };
+
+  const acceptJob = async (deliveryId:any) => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      await axios.post(
+        `${BASE_URL}/api/deliveries/${deliveryId}/update_status/`,
+        { status: "accepted" },
+        { headers: { Authorization: `Token ${token}` } }
+      );
+      router.navigate({
+        pathname: "/(home)/qr",
+        params: { rideId: deliveryId },
+      });
+    } catch (error) {
+      console.error("Error accepting job:", error);
+      Alert.alert("Error", "Failed to accept job");
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ gap: 24, padding: 12 }}>
-        <RideItem />
-        <RideItem />
+        {deliveries.map((delivery:any) => (
+          <RideItem key={delivery.id} delivery={delivery} onAccept={() => acceptJob(delivery.id)} />
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-function RideItem({}: any) {
-  const router = useRouter();
+function RideItem({ delivery, onAccept }:any) {
   return (
     <View style={{ gap: 12 }}>
       <View style={styles.rideItem}>
         <View style={styles.row}>
           <Text style={styles.title}>Pickup</Text>
-          <Text style={styles.subtitle}>Hello</Text>
+          <Text style={styles.subtitle}>{delivery.pickup_location}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.title}>Dropoff</Text>
-          <Text style={styles.subtitle}>Hello</Text>
+          <Text style={styles.subtitle}>{delivery.dropoff_location}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.title}>Total Distance</Text>
-          <Text style={styles.subtitle}>Hello</Text>
+          <Text style={styles.title}>Blood Type</Text>
+          <Text style={styles.subtitle}>{delivery.blood_type}</Text>
         </View>
       </View>
       <TouchableOpacity
-        onPress={() => {
-          router.navigate({
-            pathname: "/(home)/qr",
-            params: { rideId: "123" },
-          });
-        }}
+        onPress={onAccept}
         style={{ ...globalStyles.button, borderRadius: 12 }}
       >
         <Text style={{ color: "white", fontWeight: "500" }}>Accept job</Text>
