@@ -1,10 +1,14 @@
-import { SafeAreaView, ScrollView, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView, ScrollView, Text, TouchableOpacity,Alert } from "react-native";
 import { StyleSheet, View } from "react-native";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import { globalStyles } from "@/assets/styles/global";
 import { useState } from "react";
 import { useRoute } from "@react-navigation/native";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL } from "@env";
+import { useRouter } from "expo-router";
 
 const DetailRow = ({ title, value }: any) => {
   return (
@@ -25,6 +29,40 @@ export default function DeliveryScreen() {
     setTop("70%");
     setStep(1);
   };
+
+  const router = useRouter();
+
+  const confirmDelivery = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      await axios.post(`${BASE_URL}/api/deliveries/${rideId}/confirm_delivery/`, {}, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      Alert.alert("Success", "Delivery confirmed");
+      // Navigate back to the home screen or update the UI as needed
+      router.navigate("/(home)/");
+    } catch (error) {
+      console.error("Error confirming delivery:", error);
+      Alert.alert("Error", "Failed to confirm delivery");
+    }
+  };
+
+  const reportIssue = async (description: string) => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      await axios.post(`${BASE_URL}/api/delivery-issues/`, {
+        delivery: rideId,
+        description: description
+      }, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      Alert.alert("Success", "Issue reported successfully");
+    } catch (error) {
+      console.error("Error reporting issue:", error);
+      Alert.alert("Error", "Failed to report issue");
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <MapView style={{ flex: 1 }} />

@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Button, StyleSheet } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
+import { BASE_URL } from "@env";
 
 export default function QRCodeScanner() {
   const [hasPermission, setHasPermission] = useState<any>(null);
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState("");
+  const [rideId, setRideId] = useState(null); // Assuming rideId is needed for the API call
+
 
   useEffect(() => {
     (async () => {
@@ -14,10 +20,21 @@ export default function QRCodeScanner() {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }: any) => {
+  const handleBarCodeScanned = async ({ type, data }:any) => {
     setScanned(true);
     setScannedData(data);
-    alert(`QR Code with type ${type} and data ${data} has been scanned!`);
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      const response = await axios.post(`${BASE_URL}/api/deliveries/${rideId}/scan_qr/`, 
+        { qr_data: data },
+        { headers: { Authorization: `Token ${token}` } }
+      );
+      Alert.alert("Success", "QR code scanned successfully");
+      // Navigate to the next step or update the UI as needed
+    } catch (error) {
+      console.error("Error scanning QR code:", error);
+      Alert.alert("Error", "Failed to process QR code");
+    }
   };
 
   if (hasPermission === null) {
