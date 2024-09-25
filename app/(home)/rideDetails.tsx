@@ -1,4 +1,10 @@
-import { SafeAreaView, ScrollView, Text, TouchableOpacity,Alert } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { StyleSheet, View } from "react-native";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
@@ -7,7 +13,7 @@ import { useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { BASE_URL } from "@env";
+import { BASE_URL } from "../config";
 import { useRouter } from "expo-router";
 
 const DetailRow = ({ title, value }: any) => {
@@ -34,10 +40,14 @@ export default function DeliveryScreen() {
 
   const confirmDelivery = async () => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
-      await axios.post(`${BASE_URL}/api/deliveries/${rideId}/confirm_delivery/`, {}, {
-        headers: { Authorization: `Token ${token}` }
-      });
+      const token = await AsyncStorage.getItem("authToken");
+      await axios.post(
+        `${BASE_URL}/api/deliveries/${rideId}/confirm_delivery/`,
+        {},
+        {
+          headers: { Authorization: `Token ${token}` },
+        }
+      );
       Alert.alert("Success", "Delivery confirmed");
       // Navigate back to the home screen or update the UI as needed
       router.navigate("/(home)/");
@@ -49,13 +59,17 @@ export default function DeliveryScreen() {
 
   const reportIssue = async (description: string) => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
-      await axios.post(`${BASE_URL}/api/delivery-issues/`, {
-        delivery: rideId,
-        description: description
-      }, {
-        headers: { Authorization: `Token ${token}` }
-      });
+      const token = await AsyncStorage.getItem("authToken");
+      await axios.post(
+        `${BASE_URL}/api/delivery-issues/`,
+        {
+          delivery: rideId,
+          description: description,
+        },
+        {
+          headers: { Authorization: `Token ${token}` },
+        }
+      );
       Alert.alert("Success", "Issue reported successfully");
     } catch (error) {
       console.error("Error reporting issue:", error);

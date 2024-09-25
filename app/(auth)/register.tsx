@@ -16,7 +16,7 @@ import {
 import RadioGroup, { RadioButtonProps } from "react-native-radio-buttons-group";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { BASE_URL } from "@env";
+import { BASE_URL } from "../config";
 
 interface FormState {
   username: string;

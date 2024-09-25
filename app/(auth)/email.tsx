@@ -13,9 +13,9 @@ import {
   View,
   StyleSheet,
 } from "react-native";
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BASE_URL } from "@env";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL } from "../config";
 
 export default function EmailScreen() {
   const router = useRouter();
@@ -25,7 +25,9 @@ export default function EmailScreen() {
 
   const sendCode = async () => {
     try {
-      const response = await axios.post(`${BASE_URL}/api/send-code/`, { email });
+      const response = await axios.post(`${BASE_URL}/api/send-code/`, {
+        email,
+      });
       if (response.data) {
         setIsCodeSent(true);
         Alert.alert("Success", "Verification code sent to your email.");
@@ -38,16 +40,22 @@ export default function EmailScreen() {
 
   const verifyCode = async () => {
     try {
-      const response = await axios.post(`${BASE_URL}/api/verify-code/`, { email, code });
+      const response = await axios.post(`${BASE_URL}/api/verify-code/`, {
+        email,
+        code,
+      });
       if (response.data && response.data.token) {
-        await AsyncStorage.setItem('authToken', response.data.token);
+        await AsyncStorage.setItem("authToken", response.data.token);
         router.navigate("/(home)/");
       } else {
         Alert.alert("Verification Failed", "Invalid code");
       }
     } catch (error) {
       console.error("Error verifying code:", error);
-      Alert.alert("Verification Failed", "An error occurred during verification");
+      Alert.alert(
+        "Verification Failed",
+        "An error occurred during verification"
+      );
     }
   };
 
@@ -56,7 +64,8 @@ export default function EmailScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <Image source={require("@/assets/images/bldDrp.png")} />
         <Text style={styles.text}>
-          Please enter the code you received. The code will expire in 10 minutes.
+          Please enter the code you received. The code will expire in 10
+          minutes.
         </Text>
         <View style={{ width: "100%", gap: 12 }}>
           <TextInput
