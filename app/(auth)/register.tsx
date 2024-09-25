@@ -67,84 +67,134 @@ const DeliveryRegistrationForm = (): JSX.Element => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#EEEFF0" }}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Image source={require("@/assets/images/bldDrp.png")} />
-        <Text style={styles.heading}>Register as a Delivery Staff</Text>
-        <View style={styles.inner}>
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Username"
-            value={form.username}
-            onChangeText={(value) => handleChange("username", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Password"
-            secureTextEntry={true}
-            value={form.password}
-            onChangeText={(value) => handleChange("password", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Email"
-            value={form.email}
-            onChangeText={(value) => handleChange("email", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="First Name"
-            value={form.first_name}
-            onChangeText={(value) => handleChange("first_name", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Last Name"
-            value={form.last_name}
-            onChangeText={(value) => handleChange("last_name", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Phone Number"
-            value={form.phone_number}
-            onChangeText={(value) => handleChange("phone_number", value)}
-          />
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Address"
-            value={form.address}
-            onChangeText={(value) => handleChange("address", value)}
-          />
-          <RadioGroup
-            radioButtons={radioButtonsData}
-            onPress={(radioButtonsArray:any) => {
-              const selectedButton = radioButtonsArray.find((button:any) => button.selected);
-              if (selectedButton) {
-                handleChange("gender", selectedButton.value);
-              }
-            }}
-            layout="row"
-          />
-        </View>
+    <SafeAreaView style={{ backgroundColor: "#EEEFF0" }}>
+    <ScrollView
+      automaticallyAdjustKeyboardInsets
+      contentContainerStyle={styles.container}
+    >
+      <Image source={require("@/assets/images/bldDrp.png")} />
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>First Name*</Text>
+        <TextInput
+          style={globalStyles.input}
+          placeholder="Input text"
+          value={form.firstName}
+          onChangeText={(value) => handleChange("firstName", value)}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Last Name*</Text>
+        <TextInput
+          style={globalStyles.input}
+          placeholder="Input text"
+          value={form.lastName}
+          onChangeText={(value) => handleChange("lastName", value)}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Date of Birth*</Text>
+        <TextInput
+          style={globalStyles.input}
+          placeholder="Input text"
+          value={form.dob}
+          onChangeText={(value) => handleChange("dob", value)}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Gender*</Text>
+        <RadioGroup
+          radioButtons={radioButtonsData}
+          selectedId={gender}
+          onPress={handleRadioPress}
+          layout="row"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>E-Mail*</Text>
+        <TextInput
+          style={globalStyles.input}
+          placeholder="Input text"
+          keyboardType="email-address"
+          value={form.email}
+          onChangeText={(value) => handleChange("email", value)}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Mobile Number*</Text>
+        <TextInput
+          style={globalStyles.input}
+          placeholder="Input text"
+          keyboardType="phone-pad"
+          value={form.mobile}
+          onChangeText={(value) => handleChange("mobile", value)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Residential Address*</Text>
+        <TextInput
+          style={globalStyles.input}
+          placeholder="Input text"
+          value={form.address}
+          onChangeText={(value) => handleChange("address", value)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>License Number*</Text>
+        <TextInput
+          style={globalStyles.input}
+          placeholder="Input text"
+          value={form.licenseNumber}
+          onChangeText={(value) => handleChange("licenseNumber", value)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Vehicle Type*</Text>
+        <TextInput
+          style={globalStyles.input}
+          placeholder="Input text"
+          value={form.vehicleType}
+          onChangeText={(value) => handleChange("vehicleType", value)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Vehicle Number*</Text>
+        <TextInput
+          style={globalStyles.input}
+          placeholder="Input text"
+          value={form.vehicleNumber}
+          onChangeText={(value) => handleChange("vehicleNumber", value)}
+        />
+      </View>
+
+      <Text style={styles.mandatory}>*These fields are mandatory</Text>
+
+      <TouchableOpacity style={globalStyles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>Proceed</Text>
+      </TouchableOpacity>
+      <View
+        style={{
+          flexDirection: "row",
+          gap: 4,
+          alignItems: "center",
+        }}
+      >
+        <Text>Already registered?</Text>
         <TouchableOpacity
-          style={globalStyles.button}
-          onPress={handleRegister}
+          onPress={() => {
+            router.navigate("/(auth)/");
+          }}
         >
-          <Text style={{ color: "white", fontWeight: "500" }}>REGISTER</Text>
+          <Text style={{ color: "red" }}>LOGIN HERE</Text>
         </TouchableOpacity>
-        <View style={styles.cta}>
-          <Text>Already have an account?</Text>
-          <TouchableOpacity
-            onPress={() => {
-              router.navigate("/(auth)/");
-            }}
-          >
-            <Text style={{ color: "red" }}>LOGIN HERE</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-      <BottomImage />
-    </SafeAreaView>
+      </View>
+    </ScrollView>
+    <BottomImage />
+  </SafeAreaView>
   );
 };
 
