@@ -19,7 +19,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "../config";
 
 interface FormState {
-  username: string;
   password: string;
   email: string;
   first_name: string;
@@ -27,16 +26,15 @@ interface FormState {
   phone_number: string;
   address: string;
   gender: string;
-  licenseNumber: string;
-  vehicleType: string;
-  vehicleNumber: string;
+  license_number: string;
+  vehicle_type: string;
+  vehicle_number: string;
   dob: string;
 }
 
 const DeliveryRegistrationForm = (): JSX.Element => {
   const router = useRouter();
   const [form, setForm] = useState<FormState>({
-    username: "",
     password: "",
     email: "",
     first_name: "",
@@ -44,9 +42,9 @@ const DeliveryRegistrationForm = (): JSX.Element => {
     phone_number: "",
     address: "",
     gender: "male",
-    licenseNumber: "",
-    vehicleType: "",
-    vehicleNumber: "",
+    license_number: "",
+    vehicle_type: "",
+    vehicle_number: "",
     dob: "",
   });
 
@@ -69,9 +67,9 @@ const DeliveryRegistrationForm = (): JSX.Element => {
   const handleRegister = async (): Promise<void> => {
     try {
       const response = await axios.post(`${BASE_URL}/api/register/`, form);
-      if (response.data && response.data.token) {
-        await AsyncStorage.setItem("authToken", response.data.token);
-        router.navigate("/(home)/");
+      console.log(response.data);
+      if (response.data.message) {
+        router.navigate("/(auth)/");
       } else {
         Alert.alert(
           "Registration Failed",
@@ -118,7 +116,7 @@ const DeliveryRegistrationForm = (): JSX.Element => {
           <Text style={styles.label}>Date of Birth*</Text>
           <TextInput
             style={globalStyles.input}
-            placeholder="Input text"
+            placeholder="YYYY-MM-DD"
             value={form.dob}
             onChangeText={(value) => handleChange("dob", value)}
           />
@@ -169,8 +167,8 @@ const DeliveryRegistrationForm = (): JSX.Element => {
           <TextInput
             style={globalStyles.input}
             placeholder="Input text"
-            value={form.licenseNumber}
-            onChangeText={(value) => handleChange("licenseNumber", value)}
+            value={form.license_number}
+            onChangeText={(value) => handleChange("license_number", value)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -178,8 +176,8 @@ const DeliveryRegistrationForm = (): JSX.Element => {
           <TextInput
             style={globalStyles.input}
             placeholder="Input text"
-            value={form.vehicleType}
-            onChangeText={(value) => handleChange("vehicleType", value)}
+            value={form.vehicle_type}
+            onChangeText={(value) => handleChange("vehicle_type", value)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -187,8 +185,19 @@ const DeliveryRegistrationForm = (): JSX.Element => {
           <TextInput
             style={globalStyles.input}
             placeholder="Input text"
-            value={form.vehicleNumber}
-            onChangeText={(value) => handleChange("vehicleNumber", value)}
+            value={form.vehicle_number}
+            onChangeText={(value) => handleChange("vehicle_number", value)}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Password*</Text>
+          <TextInput
+            style={globalStyles.input}
+            placeholder="Password"
+            secureTextEntry
+            value={form.password}
+            onChangeText={(value) => handleChange("password", value)}
           />
         </View>
 
@@ -224,7 +233,7 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: "center",
     gap: 24,
-    paddingBottom: 80,
+    paddingBottom: 120,
   },
   label: {
     alignSelf: "flex-start",

@@ -53,7 +53,7 @@ export default function DeliveryScreen() {
         latitude: parseFloat(response.data.pickup_location.lat),
         longitude: parseFloat(response.data.pickup_location.lon),
       });
-      console.log("xyz",response.data.dropoff_location)
+      console.log("xyz", response.data.dropoff_location);
       setDropoffLocation({
         latitude: parseFloat(response.data.dropoff_location.lat),
         longitude: parseFloat(response.data.dropoff_location.lon),
@@ -79,14 +79,16 @@ export default function DeliveryScreen() {
   };
 
   useEffect(() => {
-    if (userLocation && (pickupLocation && dropoffLocation)) {
-      console.log(dropoffLocation)
-      const targetLocation = rideDetails?.status === "picked_up" ? dropoffLocation : pickupLocation;
+    if (userLocation && pickupLocation && dropoffLocation) {
+      const targetLocation =
+        rideDetails?.status === "picked_up" ? dropoffLocation : pickupLocation;
       const calculateDistance = () => {
         // Use the Haversine formula to calculate distance
         const R = 6371; // Radius of the Earth in km
-        const dLat = (targetLocation.latitude - userLocation.latitude) * (Math.PI / 180);
-        const dLon = (targetLocation.longitude - userLocation.longitude) * (Math.PI / 180);
+        const dLat =
+          (targetLocation.latitude - userLocation.latitude) * (Math.PI / 180);
+        const dLon =
+          (targetLocation.longitude - userLocation.longitude) * (Math.PI / 180);
         const a =
           Math.sin(dLat / 2) * Math.sin(dLat / 2) +
           Math.cos(userLocation.latitude * (Math.PI / 180)) *
@@ -159,20 +161,34 @@ export default function DeliveryScreen() {
             pinColor="green"
           />
         )}
-        {userLocation && (rideDetails?.status === "picked_up" ? dropoffLocation : pickupLocation) && (
-          <Polyline
-            coordinates={[userLocation, rideDetails?.status === "picked_up" ? dropoffLocation : pickupLocation]}
-            strokeColor="#000"
-            strokeWidth={2}
-          />
-        )}
+        {userLocation &&
+          (rideDetails?.status === "picked_up"
+            ? dropoffLocation
+            : pickupLocation) && (
+            <Polyline
+              coordinates={[
+                userLocation,
+                rideDetails?.status === "picked_up"
+                  ? dropoffLocation
+                  : pickupLocation,
+              ]}
+              strokeColor="#000"
+              strokeWidth={2}
+            />
+          )}
       </MapView>
       <View style={styles.container}>
         <ScrollView contentContainerStyle={{ alignItems: "center", gap: 12 }}>
           {rideDetails?.status === "in_progress" && (
             <>
-              <DetailRow title="Distance to pickup" value={`${distance.toFixed(2)} km`} />
-              <DetailRow title="Pickup Location" value={rideDetails.pickup_location.address} />
+              <DetailRow
+                title="Distance to pickup"
+                value={`${distance.toFixed(2)} km`}
+              />
+              <DetailRow
+                title="Pickup Location"
+                value={rideDetails.pickup_location.address}
+              />
               <DetailRow title="Order No." value={rideDetails.id} />
               <DetailRow title="Blood Group" value={rideDetails.blood_type} />
               <DetailRow title="Blood Units" value={rideDetails.blood_units} />
@@ -186,8 +202,14 @@ export default function DeliveryScreen() {
           )}
           {rideDetails?.status === "picked_up" && (
             <>
-              <DetailRow title="Distance to dropoff" value={`${distance.toFixed(2)} km`} />
-              <DetailRow title="Dropoff Location" value={rideDetails.dropoff_location.address} />
+              <DetailRow
+                title="Distance to dropoff"
+                value={`${distance.toFixed(2)} km`}
+              />
+              <DetailRow
+                title="Dropoff Location"
+                value={rideDetails.dropoff_location.address}
+              />
               <DetailRow title="Order No." value={rideDetails.id} />
               <DetailRow title="Blood Group" value={rideDetails.blood_type} />
               <DetailRow title="Blood Units" value={rideDetails.blood_units} />
@@ -218,8 +240,8 @@ const styles = StyleSheet.create({
   },
   container: {
     position: "absolute",
-    height: "100%",
-    top:350,
+    height: "50%",
+    top: "50%",
     borderTopRightRadius: 48,
     borderTopLeftRadius: 48,
     width: "100%",

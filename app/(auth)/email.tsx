@@ -70,17 +70,6 @@ export default function EmailScreen() {
         <View style={{ width: "100%", gap: 12 }}>
           <TextInput
             style={globalStyles.input}
-            placeholder="e-mail here"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <TouchableOpacity onPress={sendCode} style={globalStyles.button}>
-            <Text style={{ color: "white" }}>Send Code</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ width: "100%", gap: 12 }}>
-          <TextInput
-            style={globalStyles.input}
             placeholder="XXXXXX"
             value={code}
             onChangeText={setCode}

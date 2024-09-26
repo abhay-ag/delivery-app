@@ -18,7 +18,7 @@ import { BASE_URL } from "../config";
 const NotificationItem = ({ hospital, bloodGroup, time }: any) => (
   <View style={styles.notificationItem}>
     <Text style={styles.hospitalText}>{hospital}</Text>
-    <Text style={styles.infoText}>{bloodGroup}</Text>
+    <Text style={styles.infoText}>Blood Group: {bloodGroup}</Text>
     <Text style={styles.infoText}>Time : {time}</Text>
   </View>
 );
@@ -55,7 +55,7 @@ export const BloodDonationApp = () => {
           return (
             <NotificationItem
               key={notification.id}
-              hospital={notification.dropoff_location}
+              hospital={notification.dropoff_location.address}
               bloodGroup={notification.blood_type}
               time={notification.pickup_time}
             />
