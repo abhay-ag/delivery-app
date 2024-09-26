@@ -122,7 +122,7 @@ export default function DeliveryScreen() {
         }
       );
       Alert.alert("Success", "Delivery confirmed successfully");
-      router.navigate("/ride");
+      router.navigate({ pathname: "/ride", params: rideDetails });
     } catch (error) {
       console.error("Error confirming delivery:", error);
       Alert.alert("Error", "Failed to confirm delivery");

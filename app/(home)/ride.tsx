@@ -1,7 +1,17 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { globalStyles } from "@/assets/styles/global";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import MapView from "react-native-maps";
 
 export default function Ride() {
+  const rideDetails = useLocalSearchParams<any>();
+  const router = useRouter();
   return (
     <View style={{ flex: 1 }}>
       <MapView style={{ flex: 1 }} />
@@ -20,16 +30,29 @@ export default function Ride() {
         <ScrollView contentContainerStyle={{ gap: 12 }}>
           <View style={styles.row}>
             <Text style={styles.title}>Pickup:</Text>
-            <Text style={styles.subheading}>ACBD</Text>
+            <Text style={styles.subheading}>
+              {rideDetails.pickup_location.address}
+            </Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.title}>Drop off:</Text>
-            <Text style={styles.subheading}>ACBD</Text>
+            <Text style={styles.subheading}>
+              {rideDetails.dropoff_location.address}
+            </Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.title}>Order ID:</Text>
-            <Text style={styles.subheading}>ACBD</Text>
+            <Text style={styles.subheading}>{rideDetails.id}</Text>
           </View>
+
+          <TouchableOpacity
+            style={globalStyles.button}
+            onPress={() => {
+              router.replace("/(home)/");
+            }}
+          >
+            <Text style={{ color: "white" }}>Go to home</Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
     </View>
