@@ -90,11 +90,11 @@ function RideItem({ delivery, onAccept }: any) {
       <View style={styles.rideItem}>
         <View style={styles.row}>
           <Text style={styles.title}>Pickup</Text>
-          <Text style={styles.subtitle}>{delivery.pickup_location}</Text>
+          <Text style={styles.subtitle}>{delivery.pickup_location.address}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.title}>Dropoff</Text>
-          <Text style={styles.subtitle}>{delivery.dropoff_location}</Text>
+          <Text style={styles.subtitle}>{delivery.dropoff_location.address}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.title}>Blood Type</Text>

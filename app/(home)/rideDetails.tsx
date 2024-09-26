@@ -49,12 +49,12 @@ export default function DeliveryScreen() {
       );
       setRideDetails(response.data);
       setPickupLocation({
-        latitude: response.data.pickup_latitude,
-        longitude: response.data.pickup_longitude,
+        latitude: response.data.pickup_location.lat,
+        longitude: response.data.pickup_location.lon,
       });
       setDropoffLocation({
-        latitude: response.data.dropoff_latitude,
-        longitude: response.data.dropoff_longitude,
+        latitude: response.data.dropoff_location.lat,
+        longitude: response.data.dropoff_location.lon,
       });
     } catch (error) {
       console.error("Error fetching ride details:", error);
@@ -166,7 +166,7 @@ export default function DeliveryScreen() {
           {rideDetails?.status === "in_progress" && (
             <>
               <DetailRow title="Distance to pickup" value={`${distance.toFixed(2)} km`} />
-              <DetailRow title="Pickup Location" value={rideDetails.pickup_location} />
+              <DetailRow title="Pickup Location" value={rideDetails.pickup_location.address} />
               <DetailRow title="Order No." value={rideDetails.id} />
               <DetailRow title="Blood Group" value={rideDetails.blood_type} />
               <DetailRow title="Blood Units" value={rideDetails.blood_units} />
@@ -181,7 +181,7 @@ export default function DeliveryScreen() {
           {rideDetails?.status === "picked_up" && (
             <>
               <DetailRow title="Distance to dropoff" value={`${distance.toFixed(2)} km`} />
-              <DetailRow title="Dropoff Location" value={rideDetails.dropoff_location} />
+              <DetailRow title="Dropoff Location" value={rideDetails.dropoff_location.address} />
               <DetailRow title="Order No." value={rideDetails.id} />
               <DetailRow title="Blood Group" value={rideDetails.blood_type} />
               <DetailRow title="Blood Units" value={rideDetails.blood_units} />
@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     height: "100%",
+    top:350,
     borderTopRightRadius: 48,
     borderTopLeftRadius: 48,
     width: "100%",
