@@ -24,7 +24,6 @@ export default function QRCodeScanner() {
   const handleBarCodeScanned = async ({ type, data }: any) => {
     setScanned(true);
     setScannedData(data);
-    console.log(data);
     try {
       const token = await AsyncStorage.getItem("authToken");
       const response = await axios.post(
@@ -32,12 +31,20 @@ export default function QRCodeScanner() {
         { qr_data: data },
         { headers: { Authorization: `Token ${token}` } }
       );
+      
+      if (response.data.error) {
+        Alert.alert("Error", response.data.message);
+        setScanned(false);
+        return;
+      }
+      
       Alert.alert("Success", "QR code scanned successfully", [
         { text: "OK", onPress: () => navigateBack() }
       ]);
     } catch (error) {
       console.error("Error scanning QR code:", error);
-      Alert.alert("Error", "Failed to process QR code");
+      
+        Alert.alert("Error", "An unexpected error occurred while scanning the QR code.");
       setScanned(false);
     }
   };

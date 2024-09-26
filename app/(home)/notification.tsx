@@ -36,10 +36,18 @@ export const BloodDonationApp = () => {
       const response = await axios.get(`${BASE_URL}/api/deliveries/`, {
         headers: { Authorization: `Token ${token}` },
       });
+      
+      if (response.data.error) {
+        Alert.alert("Error", response.data.message);
+        return;
+      }
+      
       setNotifications(response.data);
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      Alert.alert("Error", "Failed to fetch notifications");
+      
+        Alert.alert("Error", "An unexpected error occurred while fetching notifications.");
+      
     }
   };
 

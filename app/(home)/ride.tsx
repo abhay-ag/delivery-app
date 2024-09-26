@@ -10,7 +10,7 @@ import {
 import MapView from "react-native-maps";
 
 export default function Ride() {
-  const rideDetails = useLocalSearchParams<any>();
+  const {rideId, pickup_location, dropoff_location} = useLocalSearchParams<any>();
   const router = useRouter();
   return (
     <View style={{ flex: 1 }}>
@@ -31,18 +31,18 @@ export default function Ride() {
           <View style={styles.row}>
             <Text style={styles.title}>Pickup:</Text>
             <Text style={styles.subheading}>
-              {rideDetails.pickup_location.address}
+              { pickup_location}
             </Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.title}>Drop off:</Text>
             <Text style={styles.subheading}>
-              {rideDetails.dropoff_location.address}
+              {dropoff_location}
             </Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.title}>Order ID:</Text>
-            <Text style={styles.subheading}>{rideDetails.id}</Text>
+            <Text style={styles.subheading}>{rideId}</Text>
           </View>
 
           <TouchableOpacity

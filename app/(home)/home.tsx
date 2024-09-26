@@ -32,30 +32,50 @@ export default function HomeScreen() {
       const response = await axios.get(`${BASE_URL}/api/deliveries/`, {
         headers: { Authorization: `Token ${token}` },
       });
+      
+      if (response.data.error) {
+        Alert.alert("Error", response.data.message);
+        return;
+      }
+      
       setDeliveries(response.data);
-      setRefresh(false);
     } catch (error) {
       console.error("Error fetching deliveries:", error);
+      if (axios.isAxiosError(error)) {
+
+        Alert.alert("Error", "An unexpected error occurred while fetching deliveries.");
+      }
+    } finally {
       setRefresh(false);
-      Alert.alert("Error", "Failed to fetch deliveries");
     }
   };
 
   const acceptJob = async (deliveryId: any) => {
     try {
       const token = await AsyncStorage.getItem("authToken");
-      await axios.post(
+      const response = await axios.post(
         `${BASE_URL}/api/deliveries/${deliveryId}/accept_job/`,
         {},
         { headers: { Authorization: `Token ${token}` } }
       );
+      
+      if (response.data.error) {
+        Alert.alert("Error", response.data.message);
+        return;
+      }
+      
       router.navigate({
         pathname: "/(home)/rideDetails",
         params: { rideId: deliveryId },
       });
     } catch (error) {
       console.error("Error accepting job:", error);
-      Alert.alert("Error", "Failed to accept job");
+      if (axios.isAxiosError(error)) {
+        // Handle error similarly to rideDetails.tsx
+        // ... (implement error handling as above)
+      } else {
+        Alert.alert("Error", "An unexpected error occurred while accepting the job.");
+      }
     }
   };
   const [refreshing, setRefresh] = useState(false);

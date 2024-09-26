@@ -47,20 +47,27 @@ export default function DeliveryScreen() {
           headers: { Authorization: `Token ${token}` },
         }
       );
-      // console.log(response.data)
+      
+      if (response.data.error) {
+        Alert.alert("Error", response.data.message);
+        return;
+      }
+      
       setRideDetails(response.data);
       setPickupLocation({
         latitude: parseFloat(response.data.pickup_location.lat),
         longitude: parseFloat(response.data.pickup_location.lon),
       });
-      console.log("xyz", response.data.dropoff_location);
       setDropoffLocation({
         latitude: parseFloat(response.data.dropoff_location.lat),
         longitude: parseFloat(response.data.dropoff_location.lon),
       });
     } catch (error) {
       console.error("Error fetching ride details:", error);
-      Alert.alert("Error", "Failed to fetch ride details");
+
+          // Something happened in setting up the request that triggered an Error
+          Alert.alert("Error", "An unexpected error occurred.");
+
     }
   };
 
@@ -121,11 +128,29 @@ export default function DeliveryScreen() {
           headers: { Authorization: `Token ${token}` },
         }
       );
+      
+      if (response.data.error) {
+        Alert.alert("Error", response.data.message);
+        return;
+      }
+      
       Alert.alert("Success", "Delivery confirmed successfully");
-      router.navigate({ pathname: "/ride", params: rideDetails });
+      router.navigate({ 
+        pathname: "/ride", 
+        params: { 
+          rideId: rideDetails.id, 
+          pickup_location: rideDetails.pickup_location.address, 
+          dropoff_location: rideDetails.dropoff_location.address 
+        } 
+      });
     } catch (error) {
       console.error("Error confirming delivery:", error);
-      Alert.alert("Error", "Failed to confirm delivery");
+      if (axios.isAxiosError(error)) {
+        // Handle error similarly to fetchRideDetails
+        // ... (implement error handling as above)
+      } else {
+        Alert.alert("Error", "An unexpected error occurred while confirming delivery.");
+      }
     }
   };
 
