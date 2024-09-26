@@ -67,9 +67,8 @@ const DeliveryRegistrationForm = (): JSX.Element => {
   const handleRegister = async (): Promise<void> => {
     try {
       const response = await axios.post(`${BASE_URL}/api/register/`, form);
-      if (response.data && response.data.token) {
-        await AsyncStorage.setItem("authToken", response.data.token);
-        router.navigate("/(home)/");
+      if (response.data.message) {
+        router.navigate("/(auth)/");
       } else {
         Alert.alert(
           "Registration Failed",
@@ -84,7 +83,6 @@ const DeliveryRegistrationForm = (): JSX.Element => {
       );
     }
   };
-
 
   return (
     <SafeAreaView style={{ backgroundColor: "#EEEFF0" }}>
