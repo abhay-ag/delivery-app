@@ -13,8 +13,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const BASE_URL = "http://localhost:8000"; // Replace with your actual API base URL
+import { BASE_URL } from "../config";
 
 export default function InProgressJobs() {
   const [deliveries, setDeliveries] = useState([]);
@@ -28,9 +27,13 @@ export default function InProgressJobs() {
     try {
       setRefresh(true);
       const token = await AsyncStorage.getItem("authToken");
-      const response = await axios.get(`${BASE_URL}/api/deliveries/`, {
-        headers: { Authorization: `Token ${token}` },
-      });
+      const response = await axios.get(
+        `${BASE_URL}/api/deliveries/accepted_deliveries/`,
+        {
+          headers: { Authorization: `Token ${token}` },
+        }
+      );
+      console.log(response.data);
       setDeliveries(response.data);
       setRefresh(false);
     } catch (error) {
@@ -41,21 +44,10 @@ export default function InProgressJobs() {
   };
 
   const acceptJob = async (deliveryId: any) => {
-    try {
-      const token = await AsyncStorage.getItem("authToken");
-      await axios.patch(
-        `${BASE_URL}/api/deliveries/${deliveryId}/`,
-        { status: "in_progress" },
-        { headers: { Authorization: `Token ${token}` } }
-      );
-      router.navigate({
-        pathname: "/(home)/rideDetails",
-        params: { rideId: deliveryId },
-      });
-    } catch (error) {
-      console.error("Error accepting job:", error);
-      Alert.alert("Error", "Failed to accept job");
-    }
+    router.navigate({
+      pathname: "/(home)/rideDetails",
+      params: { rideId: deliveryId },
+    });
   };
   const [refreshing, setRefresh] = useState(false);
 
@@ -67,17 +59,17 @@ export default function InProgressJobs() {
           <RefreshControl refreshing={refreshing} onRefresh={fetchDeliveries} />
         }
       >
-        {deliveries.filter((e: any) => e.status === "in_progress").length ===
-          0 && <Text>No Jobs Available</Text>}
-        {deliveries.map((delivery: any) => {
-          return delivery.status === "in_progress" ? (
+        {deliveries.length > 0 ? (
+          deliveries.map((delivery: any) => (
             <RideItem
               key={delivery.id}
               delivery={delivery}
               onAccept={() => acceptJob(delivery.id)}
             />
-          ) : null;
-        })}
+          ))
+        ) : (
+          <Text>No Jobs Available</Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

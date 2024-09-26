@@ -47,14 +47,16 @@ export default function DeliveryScreen() {
           headers: { Authorization: `Token ${token}` },
         }
       );
+      // console.log(response.data)
       setRideDetails(response.data);
       setPickupLocation({
-        latitude: response.data.pickup_location.lat,
-        longitude: response.data.pickup_location.lon,
+        latitude: parseFloat(response.data.pickup_location.lat),
+        longitude: parseFloat(response.data.pickup_location.lon),
       });
+      console.log("xyz",response.data.dropoff_location)
       setDropoffLocation({
-        latitude: response.data.dropoff_location.lat,
-        longitude: response.data.dropoff_location.lon,
+        latitude: parseFloat(response.data.dropoff_location.lat),
+        longitude: parseFloat(response.data.dropoff_location.lon),
       });
     } catch (error) {
       console.error("Error fetching ride details:", error);
@@ -77,7 +79,8 @@ export default function DeliveryScreen() {
   };
 
   useEffect(() => {
-    if (userLocation && (pickupLocation || dropoffLocation)) {
+    if (userLocation && (pickupLocation && dropoffLocation)) {
+      console.log(dropoffLocation)
       const targetLocation = rideDetails?.status === "picked_up" ? dropoffLocation : pickupLocation;
       const calculateDistance = () => {
         // Use the Haversine formula to calculate distance
@@ -100,7 +103,10 @@ export default function DeliveryScreen() {
   }, [userLocation, pickupLocation, dropoffLocation, rideDetails]);
 
   const handlePickup = () => {
-    router.push(`/qr?rideId=${rideId}`);
+    router.push({
+      pathname: "/qr",
+      params: { rideId },
+    });
   };
 
   const handleConfirmDelivery = async () => {
@@ -114,7 +120,7 @@ export default function DeliveryScreen() {
         }
       );
       Alert.alert("Success", "Delivery confirmed successfully");
-      // fetchRideDetails(); // Refresh ride details after confirming delivery
+      router.navigate("/ride");
     } catch (error) {
       console.error("Error confirming delivery:", error);
       Alert.alert("Error", "Failed to confirm delivery");

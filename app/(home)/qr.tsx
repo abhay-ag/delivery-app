@@ -24,6 +24,7 @@ export default function QRCodeScanner() {
   const handleBarCodeScanned = async ({ type, data }: any) => {
     setScanned(true);
     setScannedData(data);
+    console.log(data);
     try {
       const token = await AsyncStorage.getItem("authToken");
       const response = await axios.post(

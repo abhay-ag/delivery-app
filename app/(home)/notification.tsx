@@ -11,8 +11,9 @@ import {
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL } from "../config";
 
-const BASE_URL = "http://localhost:8000"; // Replace with your actual API base URL
+// Replace with your actual API base URL
 
 const NotificationItem = ({ hospital, bloodGroup, time }: any) => (
   <View style={styles.notificationItem}>

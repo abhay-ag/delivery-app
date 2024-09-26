@@ -13,8 +13,9 @@ import {
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL } from "../config";
 
-const BASE_URL = "http://localhost:8000"; // Replace with your actual API base URL
+
 
 export default function HomeScreen() {
   const [deliveries, setDeliveries] = useState([]);
@@ -43,9 +44,9 @@ export default function HomeScreen() {
   const acceptJob = async (deliveryId: any) => {
     try {
       const token = await AsyncStorage.getItem("authToken");
-      await axios.patch(
-        `${BASE_URL}/api/deliveries/${deliveryId}/`,
-        { status: "in_progress" },
+      await axios.post(
+        `${BASE_URL}/api/deliveries/${deliveryId}/accept_job/`,
+        {},
         { headers: { Authorization: `Token ${token}` } }
       );
       router.navigate({
