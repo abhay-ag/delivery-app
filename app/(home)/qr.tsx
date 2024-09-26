@@ -5,12 +5,14 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { BASE_URL } from "../config";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 export default function QRCodeScanner() {
   const [hasPermission, setHasPermission] = useState<any>(null);
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState("");
-  const [rideId, setRideId] = useState(null); // Assuming rideId is needed for the API call
+  const router = useRouter();
+  const { rideId } = useLocalSearchParams();
 
   useEffect(() => {
     (async () => {
@@ -29,12 +31,18 @@ export default function QRCodeScanner() {
         { qr_data: data },
         { headers: { Authorization: `Token ${token}` } }
       );
-      Alert.alert("Success", "QR code scanned successfully");
-      // Navigate to the next step or update the UI as needed
+      Alert.alert("Success", "QR code scanned successfully", [
+        { text: "OK", onPress: () => navigateBack() }
+      ]);
     } catch (error) {
       console.error("Error scanning QR code:", error);
       Alert.alert("Error", "Failed to process QR code");
+      setScanned(false);
     }
+  };
+
+  const navigateBack = () => {
+    router.back();
   };
 
   if (hasPermission === null) {
