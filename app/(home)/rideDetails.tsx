@@ -14,6 +14,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "../config";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 const DetailRow = ({ title, value }: any) => {
   return (
@@ -32,11 +34,6 @@ export default function DeliveryScreen() {
   const [dropoffLocation, setDropoffLocation] = useState<any>(null);
   const [distance, setDistance] = useState<number>(0);
   const [rideDetails, setRideDetails] = useState<any>(null);
-
-  useEffect(() => {
-    fetchRideDetails();
-    getUserLocation();
-  }, [rideId]);
 
   const fetchRideDetails = async () => {
     try {
@@ -64,12 +61,16 @@ export default function DeliveryScreen() {
       });
     } catch (error) {
       console.error("Error fetching ride details:", error);
-
-          // Something happened in setting up the request that triggered an Error
-          Alert.alert("Error", "An unexpected error occurred.");
-
+      Alert.alert("Error", "An unexpected error occurred while fetching ride details.");
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchRideDetails();
+      getUserLocation();
+    }, [rideId])
+  );
 
   const getUserLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -172,7 +173,7 @@ export default function DeliveryScreen() {
             pinColor="blue"
           />
         )}
-        {rideDetails?.status !== "picked_up" && pickupLocation && (
+        {rideDetails?.status === "in_progress" && pickupLocation && (
           <Marker
             coordinate={pickupLocation}
             title="Pickup Location"
@@ -187,15 +188,11 @@ export default function DeliveryScreen() {
           />
         )}
         {userLocation &&
-          (rideDetails?.status === "picked_up"
-            ? dropoffLocation
-            : pickupLocation) && (
+          (rideDetails?.status === "picked_up" ? dropoffLocation : pickupLocation) && (
             <Polyline
               coordinates={[
                 userLocation,
-                rideDetails?.status === "picked_up"
-                  ? dropoffLocation
-                  : pickupLocation,
+                rideDetails?.status === "picked_up" ? dropoffLocation : pickupLocation,
               ]}
               strokeColor="#000"
               strokeWidth={2}
