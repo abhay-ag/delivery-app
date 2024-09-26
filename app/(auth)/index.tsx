@@ -1,7 +1,7 @@
 import { globalStyles } from "@/assets/styles/global";
 import { BottomImage } from "@/components/BottomImagePlaceHolder";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   Image,
   SafeAreaView,
@@ -25,7 +25,7 @@ export default function Auth() {
   const handleLogin = async () => {
     try {
       const response = await axios.post(`${BASE_URL}/api/auth/login/`, {
-        username: email, // Assuming email is used as username
+         email,
         password,
       });
       
@@ -41,6 +41,16 @@ export default function Auth() {
       Alert.alert("Login Failed", "An error occurred during login");
     }
   };
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = await AsyncStorage.getItem("authToken");
+      if (token) {
+        router.replace("/(home)/");
+      } 
+    };
+
+    checkAuth();
+  }, [router]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#EEEFF0" }}>
