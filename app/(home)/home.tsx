@@ -1,9 +1,18 @@
 import { globalStyles } from "@/assets/styles/global";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet, View, Alert } from "react-native";
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+  Alert,
+  RefreshControl,
+} from "react-native";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BASE_URL = "http://localhost:8000"; // Replace with your actual API base URL
 
@@ -17,27 +26,30 @@ export default function HomeScreen() {
 
   const fetchDeliveries = async () => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
+      setRefresh(true);
+      const token = await AsyncStorage.getItem("authToken");
       const response = await axios.get(`${BASE_URL}/api/deliveries/`, {
-        headers: { Authorization: `Token ${token}` }
+        headers: { Authorization: `Token ${token}` },
       });
       setDeliveries(response.data);
+      setRefresh(false);
     } catch (error) {
       console.error("Error fetching deliveries:", error);
+      setRefresh(false);
       Alert.alert("Error", "Failed to fetch deliveries");
     }
   };
 
-  const acceptJob = async (deliveryId:any) => {
+  const acceptJob = async (deliveryId: any) => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
-      await axios.post(
-        `${BASE_URL}/api/deliveries/${deliveryId}/update_status/`,
-        { status: "accepted" },
+      const token = await AsyncStorage.getItem("authToken");
+      await axios.patch(
+        `${BASE_URL}/api/deliveries/${deliveryId}/`,
+        { status: "in_progress" },
         { headers: { Authorization: `Token ${token}` } }
       );
       router.navigate({
-        pathname: "/(home)/qr",
+        pathname: "/(home)/rideDetails",
         params: { rideId: deliveryId },
       });
     } catch (error) {
@@ -45,19 +57,34 @@ export default function HomeScreen() {
       Alert.alert("Error", "Failed to accept job");
     }
   };
+  const [refreshing, setRefresh] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={{ gap: 24, padding: 12 }}>
-        {deliveries.map((delivery:any) => (
-          <RideItem key={delivery.id} delivery={delivery} onAccept={() => acceptJob(delivery.id)} />
-        ))}
+      <ScrollView
+        contentContainerStyle={{ gap: 24, padding: 12 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={fetchDeliveries} />
+        }
+      >
+        {deliveries.filter((e: any) => e.status === "pending").length === 0 && (
+          <Text>No Jobs Available</Text>
+        )}
+        {deliveries.map((delivery: any) => {
+          return delivery.status === "pending" ? (
+            <RideItem
+              key={delivery.id}
+              delivery={delivery}
+              onAccept={() => acceptJob(delivery.id)}
+            />
+          ) : null;
+        })}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-function RideItem({ delivery, onAccept }:any) {
+function RideItem({ delivery, onAccept }: any) {
   return (
     <View style={{ gap: 12 }}>
       <View style={styles.rideItem}>

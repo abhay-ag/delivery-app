@@ -45,15 +45,6 @@ const UserProfileScreen = () => {
 
   const handleLogout = async () => {
     try {
-      const token = await AsyncStorage.getItem("authToken");
-      await axios.post(
-        `${BASE_URL}/api/auth/logout/`,
-        {},
-        {
-          headers: { Authorization: `Token ${token}` },
-        }
-      );
-      // Clear the stored token here
       await AsyncStorage.removeItem("authToken");
       router.replace("/(auth)/");
     } catch (error) {

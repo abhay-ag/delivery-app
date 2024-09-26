@@ -9,18 +9,16 @@ import {
   Image,
   Alert,
 } from "react-native";
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BASE_URL = "http://localhost:8000"; // Replace with your actual API base URL
 
-const NotificationItem = ({ hospital, bloodGroup, time, date }:any) => (
+const NotificationItem = ({ hospital, bloodGroup, time }: any) => (
   <View style={styles.notificationItem}>
     <Text style={styles.hospitalText}>{hospital}</Text>
     <Text style={styles.infoText}>{bloodGroup}</Text>
-    <Text style={styles.infoText}>
-      Time : {time} {date}
-    </Text>
+    <Text style={styles.infoText}>Time : {time}</Text>
   </View>
 );
 
@@ -32,16 +30,16 @@ export const BloodDonationApp = () => {
   }, []);
 
   const fetchNotifications = async () => {
-    // try {
-    //   const token = await AsyncStorage.getItem('authToken');
-    //   const response = await axios.get(`${BASE_URL}/api/notifications/`, {
-    //     headers: { Authorization: `Token ${token}` }
-    //   });
-    //   setNotifications(response.data);
-    // } catch (error) {
-    //   console.error("Error fetching notifications:", error);
-    //   Alert.alert("Error", "Failed to fetch notifications");
-    // }
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      const response = await axios.get(`${BASE_URL}/api/deliveries/`, {
+        headers: { Authorization: `Token ${token}` },
+      });
+      setNotifications(response.data);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      Alert.alert("Error", "Failed to fetch notifications");
+    }
   };
 
   return (
@@ -52,15 +50,16 @@ export const BloodDonationApp = () => {
           <Text style={styles.notificationText}>Notification</Text>
         </View>
 
-        {notifications.map((notification:any) => (
-          <NotificationItem
-            key={notification.id}
-            hospital={notification.hospital}
-            bloodGroup={notification.bloodGroup}
-            time={notification.time}
-            date={notification.date}
-          />
-        ))}
+        {notifications.map((notification: any) => {
+          return (
+            <NotificationItem
+              key={notification.id}
+              hospital={notification.dropoff_location}
+              bloodGroup={notification.blood_type}
+              time={notification.pickup_time}
+            />
+          );
+        })}
       </ScrollView>
       <BottomImage opacity />
     </SafeAreaView>
@@ -75,6 +74,7 @@ const styles = StyleSheet.create({
   scrollView: {
     padding: 20,
     gap: 8,
+    alignItems: "center",
   },
   header: {
     alignItems: "center",
@@ -85,14 +85,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   notificationItem: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: 8,
+    backgroundColor: "#F0F0F0",
+    borderRadius: 10,
+    padding: 15,
+    width: "100%",
     marginBottom: 10,
   },
   hospitalText: {
     fontSize: 16,
     fontWeight: "bold",
+    marginBottom: 5,
   },
   infoText: {
     fontSize: 14,

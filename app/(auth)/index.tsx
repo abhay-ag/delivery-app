@@ -41,16 +41,6 @@ export default function Auth() {
       Alert.alert("Login Failed", "An error occurred during login");
     }
   };
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = await AsyncStorage.getItem("authToken");
-      if (token) {
-        router.replace("/(home)/");
-      } 
-    };
-
-    checkAuth();
-  }, [router]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#EEEFF0" }}>

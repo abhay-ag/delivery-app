@@ -3,9 +3,6 @@ import { BottomImage } from "@/components/BottomImagePlaceHolder";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
-
-
-
   return (
     <View style={globalStyles.RootView}>
       <Image source={require("@/assets/images/bldDrp.png")} />

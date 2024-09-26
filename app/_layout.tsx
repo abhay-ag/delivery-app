@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
 import { useEffect } from "react";
 
@@ -5,7 +6,15 @@ export default function RootLayout() {
   const router = useRouter();
   useEffect(() => {
     setTimeout(() => {
-      router.replace("/init");
+      const checkAuth = async () => {
+        const token = await AsyncStorage.getItem("authToken");
+        if (token) {
+          router.replace("/(home)/");
+        } else {
+          router.replace("/init");
+        }
+      };
+      checkAuth();
     }, 2000);
   }, [router]);
   return (
