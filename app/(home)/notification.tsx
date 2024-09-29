@@ -19,7 +19,18 @@ const NotificationItem = ({ hospital, bloodGroup, time }: any) => (
   <View style={styles.notificationItem}>
     <Text style={styles.hospitalText}>{hospital}</Text>
     <Text style={styles.infoText}>Blood Group: {bloodGroup}</Text>
-    <Text style={styles.infoText}>Time : {time}</Text>
+    <View
+      style={{
+        justifyContent: "space-between",
+        flexDirection: "row",
+        marginTop: 20,
+      }}
+    >
+      <Text style={styles.infoText}>
+        Time : {new Date(time).toLocaleTimeString()}
+      </Text>
+      <Text style={styles.infoText}>{new Date(time).toLocaleDateString()}</Text>
+    </View>
   </View>
 );
 
@@ -36,18 +47,20 @@ export const BloodDonationApp = () => {
       const response = await axios.get(`${BASE_URL}/api/deliveries/`, {
         headers: { Authorization: `Token ${token}` },
       });
-      
+
       if (response.data.error) {
         Alert.alert("Error", response.data.message);
         return;
       }
-      
+
       setNotifications(response.data);
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      
-        Alert.alert("Error", "An unexpected error occurred while fetching notifications.");
-      
+
+      Alert.alert(
+        "Error",
+        "An unexpected error occurred while fetching notifications."
+      );
     }
   };
 
@@ -82,6 +95,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     padding: 20,
+    paddingBottom: 90,
     gap: 8,
     alignItems: "center",
   },
