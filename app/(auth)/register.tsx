@@ -17,6 +17,7 @@ import RadioGroup, { RadioButtonProps } from "react-native-radio-buttons-group";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "../config";
+import Icon from "react-native-vector-icons/AntDesign";
 
 interface FormState {
   password: string;
@@ -83,6 +84,8 @@ const DeliveryRegistrationForm = (): JSX.Element => {
       );
     }
   };
+
+  const [secure, setSecure] = useState(true);
 
   return (
     <SafeAreaView style={{ backgroundColor: "#EEEFF0" }}>
@@ -191,13 +194,22 @@ const DeliveryRegistrationForm = (): JSX.Element => {
 
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Password*</Text>
-          <TextInput
-            style={globalStyles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={form.password}
-            onChangeText={(value) => handleChange("password", value)}
-          />
+          <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
+            <TextInput
+              style={{ ...globalStyles.input, flex: 1 }}
+              placeholder="Password"
+              secureTextEntry={secure}
+              value={form.password}
+              onChangeText={(value) => handleChange("password", value)}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                setSecure(!secure);
+              }}
+            >
+              <Icon name="eye" size={24} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Text style={styles.mandatory}>*These fields are mandatory</Text>
