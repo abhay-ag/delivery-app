@@ -194,9 +194,16 @@ const DeliveryRegistrationForm = (): JSX.Element => {
 
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Password*</Text>
-          <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 4,
+              alignItems: "center",
+              ...globalStyles.input,
+            }}
+          >
             <TextInput
-              style={{ ...globalStyles.input, flex: 1 }}
+              style={{ flex: 1 }}
               placeholder="Password"
               secureTextEntry={secure}
               value={form.password}
