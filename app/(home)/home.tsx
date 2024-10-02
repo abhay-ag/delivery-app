@@ -15,8 +15,6 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "../config";
 
-
-
 export default function HomeScreen() {
   const [deliveries, setDeliveries] = useState([]);
   const router = useRouter();
@@ -32,18 +30,20 @@ export default function HomeScreen() {
       const response = await axios.get(`${BASE_URL}/api/deliveries/`, {
         headers: { Authorization: `Token ${token}` },
       });
-      
+
       if (response.data.error) {
         Alert.alert("Error", response.data.message);
         return;
       }
-      
+
       setDeliveries(response.data);
     } catch (error) {
       console.error("Error fetching deliveries:", error);
       if (axios.isAxiosError(error)) {
-
-        Alert.alert("Error", "An unexpected error occurred while fetching deliveries.");
+        Alert.alert(
+          "Error",
+          "An unexpected error occurred while fetching deliveries."
+        );
       }
     } finally {
       setRefresh(false);
@@ -58,12 +58,12 @@ export default function HomeScreen() {
         {},
         { headers: { Authorization: `Token ${token}` } }
       );
-      
+
       if (response.data.error) {
         Alert.alert("Error", response.data.message);
         return;
       }
-      
+
       router.navigate({
         pathname: "/(home)/rideDetails",
         params: { rideId: deliveryId },
@@ -74,7 +74,10 @@ export default function HomeScreen() {
         // Handle error similarly to rideDetails.tsx
         // ... (implement error handling as above)
       } else {
-        Alert.alert("Error", "An unexpected error occurred while accepting the job.");
+        Alert.alert(
+          "Error",
+          "An unexpected error occurred while accepting the job."
+        );
       }
     }
   };
@@ -111,11 +114,15 @@ function RideItem({ delivery, onAccept }: any) {
       <View style={styles.rideItem}>
         <View style={styles.row}>
           <Text style={styles.title}>Pickup</Text>
-          <Text style={styles.subtitle}>{delivery.pickup_location.address}</Text>
+          <Text style={styles.subtitle}>
+            {delivery.pickup_location.address}
+          </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.title}>Dropoff</Text>
-          <Text style={styles.subtitle}>{delivery.dropoff_location.address}</Text>
+          <Text style={styles.subtitle}>
+            {delivery.dropoff_location.address}
+          </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.title}>Blood Type</Text>
@@ -124,6 +131,13 @@ function RideItem({ delivery, onAccept }: any) {
         <View style={styles.row}>
           <Text style={styles.title}>Units</Text>
           <Text style={styles.subtitle}>{delivery.blood_units}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.title}>Time & Date</Text>
+          <Text style={styles.subtitle}>
+            {new Date(delivery.created_at).toLocaleTimeString()} &{" "}
+            {new Date(delivery.created_at).toLocaleDateString()}
+          </Text>
         </View>
       </View>
       <TouchableOpacity
