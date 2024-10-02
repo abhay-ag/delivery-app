@@ -121,6 +121,10 @@ function RideItem({ delivery, onAccept }: any) {
           <Text style={styles.title}>Blood Type</Text>
           <Text style={styles.subtitle}>{delivery.blood_type}</Text>
         </View>
+        <View style={styles.row}>
+          <Text style={styles.title}>Units</Text>
+          <Text style={styles.subtitle}>{delivery.blood_units}</Text>
+        </View>
       </View>
       <TouchableOpacity
         onPress={onAccept}
